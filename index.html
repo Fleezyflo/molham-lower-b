@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+<meta charset=utf-8/>
+<meta name=viewport content=width=device-width,initial-scale=1/>
+<title>Fri Lower B Short</title>
+<style>
+body{margin:0;background:#0b0d10;color:#f3f5f8;font-family:-apple-system,sans-serif}
+header{padding:14px;border-bottom:1px solid #2a3140;position:sticky;top:0;background:#0b0d10}
+h1{margin:0;font-size:1.15rem}
+.sub{color:#9aa3b2;font-size:.82rem;margin-top:4px}
+main{padding:12px 12px 160px;max-width:680px;margin:0 auto}
+.ex{background:#161a22;border:1px solid #2a3140;border-radius:14px;margin:0 0 12px;padding:12px}
+.target{color:#5eead4;font-weight:700;margin-top:4px}
+.tip{color:#9aa3b2;font-size:.8rem;margin-top:4px}
+.card{height:88px;border-radius:10px;margin:8px 0;background:#1e2430;border:1px solid #2a3140;display:flex;align-items:center;padding:0 16px;color:#5eead4;font-weight:700;letter-spacing:.04em}
+.row{display:grid;grid-template-columns:28px 1fr 1fr 32px;gap:6px;align-items:center;background:#1e2430;border-radius:10px;padding:8px;margin:6px 0}
+input[type=number]{width:100%;background:#0f131a;border:1px solid #2a3140;color:#f3f5f8;border-radius:8px;padding:10px;text-align:center}
+.foot{position:fixed;left:0;right:0;bottom:0;background:#0b0d10;border-top:1px solid #2a3140;padding:12px;display:flex;flex-direction:column;gap:8px}
+button{appearance:none;border:1px solid #2a3140;background:#1e2430;color:#f3f5f8;border-radius:10px;padding:10px;font-weight:700}
+.export{background:#5eead4;color:#042f2e;border:0;padding:14px;font-size:1.05rem}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+</style>
+</head>
+<body>
+<header>
+<h1>Fri Lower B Short · 2026-09-25</h1>
+<div class=sub>Recomp · short · Export to Health Bot</div>
+</header>
+<main id=app></main>
+<div class=foot>
+<button class=export id=ex>Export to Health Bot</button>
+<button id=rs>Reset session</button>
+</div>
+<script>
+(function(){
+var KEY='workout_lowerB_short_2026-09-25';
+var L=[
+{id:'lp',n:'Leg press',t:'3 x 8-10',s:3,tip:'Tue slot blank. First logged stack for 8 clean.',w:'',tag:'LEG PRESS'},
+{id:'rdl',n:'Romanian deadlift',t:'3 x 8-10',s:3,tip:'Start 60 kg. Squat worked 70 x 8 Tue 22.',w:'60',tag:'RDL BARBELL'},
+{id:'bss',n:'Bulgarian split squat',t:'2 x 8 /leg',s:2,tip:'No history. Light DBs or BW. Log per leg.',w:'',tag:'BULGARIAN SPLIT'},
+{id:'le',n:'Leg extension',t:'2 x 10-12',s:2,tip:'No history. First logged stack.',w:'',tag:'LEG EXTENSION'},
+{id:'sc',n:'Standing calf raise',t:'2 x 12-15',s:2,tip:'Tue standing blank. Seated was 25 x 12.',w:'',tag:'STANDING CALF'},
+{id:'hk',n:'Hanging knee raise',t:'2 x 10-15',s:2,tip:'Captain chair if the bar is chaos. No swing.',w:'',tag:'HANGING KNEE'}
+];
+function empty(){var s={d:'2026-09-25',o:[],e:{}};for(var i=0;i<L.length;i++){var x=L[i],sets=[];for(var j=0;j<x.s;j++)sets.push({w:x.w,r:'',ok:false});s.o.push(x.id);s.e[x.id]={n:x.n,t:x.t,tip:x.tip,tag:x.tag,sets:sets};}return s;}
+function load(){try{var r=localStorage.getItem(KEY);if(!r)return empty();var s=JSON.parse(r);if(!s.o||!s.e)return empty();return s;}catch(e){return empty();}}
+var st=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+function render(){
+ var app=document.getElementById('app');app.innerHTML='';
+ for(var i=0;i<st.o.length;i++){
+  var id=st.o[i],ex=st.e[id];if(!ex)continue;
+  var art=document.createElement('article');art.className='ex';
+  var h=document.createElement('div');
+  h.innerHTML='<b></b><div class=target></div><div class=tip></div>';
+  h.querySelector('b').textContent=ex.n;
+  h.querySelector('.target').textContent=ex.t;
+  h.querySelector('.tip').textContent=ex.tip;
+  art.appendChild(h);
+  var card=document.createElement('div');card.className='card';card.textContent='EQUIPMENT ID \u00b7 '+ex.tag;art.appendChild(card);
+  var acts=document.createElement('div');acts.className='acts';
+  var b1=document.createElement('button');b1.textContent='Copy set 1';
+  b1.onclick=(function(exRef){return function(){for(var z=1;z<exRef.sets.length;z++){exRef.sets[z].w=exRef.sets[0].w;exRef.sets[z].r=exRef.sets[0].r;}save();render();};})(ex);
+  var b2=document.createElement('button');b2.textContent='+2.5';
+  b2.onclick=(function(exRef){return function(){var c=parseFloat(exRef.sets[0].w);if(isNaN(c))c=0;exRef.sets[0].w=String(c+2.5);save();render();};})(ex);
+  var b3=document.createElement('button');b3.textContent='+5';
+  b3.onclick=(function(exRef){return function(){var c=parseFloat(exRef.sets[0].w);if(isNaN(c))c=0;exRef.sets[0].w=String(c+5);save();render();};})(ex);
+  acts.appendChild(b1);acts.appendChild(b2);acts.appendChild(b3);art.appendChild(acts);
+  for(var k=0;k<ex.sets.length;k++){
+   var row=ex.sets[k],div=document.createElement('div');div.className='row';
+   div.innerHTML='<label>S'+(k+1)+'</label><input type=number step=0.5 min=0 placeholder=kg /><input type=number step=1 min=0 placeholder=reps /><input type=checkbox />';
+   var ins=div.querySelectorAll('input');ins[0].value=row.w;ins[1].value=row.r;ins[2].checked=!!row.ok;
+   (function(rowRef,a,b,c){a.oninput=function(){rowRef.w=a.value;save();};b.oninput=function(){rowRef.r=b.value;save();};c.onchange=function(){rowRef.ok=c.checked;save();};})(row,ins[0],ins[1],ins[2]);
+   art.appendChild(div);
+  }
+  app.appendChild(art);
+ }
+}
+function exp(){
+ var lines=['LOWER_B_EXPORT','date: '+st.d,'session: Lower B Short','---'];
+ for(var i=0;i<st.o.length;i++){var ex=st.e[st.o[i]];lines.push(ex.n);for(var j=0;j<ex.sets.length;j++){var s=ex.sets[j];if(s.w||s.r||s.ok)lines.push('  S'+(j+1)+': '+(s.w||'?')+' kg x '+(s.r||'?')+' reps'+(s.ok?' done':''));}}
+ lines.push('---','Watch: Traditional Strength Training','END_EXPORT');
+ var text=lines.join(String.fromCharCode(10));
+ if(navigator.clipboard) navigator.clipboard.writeText(text);
+ else prompt('Copy',text);
+}
+document.getElementById('ex').onclick=exp;
+document.getElementById('rs').onclick=function(){if(confirm('Clear this session?')){st=empty();save();render();}};
+render();
+})();
+</script>
+</body>
+</html>
